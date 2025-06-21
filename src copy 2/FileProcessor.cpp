@@ -9,7 +9,7 @@
 #include "MemoryMonitor.h" // Incluir o cabeçalho do monitor de memória
 
 // Processa um arquivo CSV com uma estrutura de dados específica
-void FileProcessor::processFile(std::unique_ptr<IDataStructure> dataStructure, const std::string& inputFilePath, const std::string& outputFilePath, const std::string& structureType, int dataSize) {
+long FileProcessor::processFile(std::unique_ptr<IDataStructure> dataStructure, const std::string& inputFilePath, const std::string& outputFilePath, const std::string& structureType, int dataSize) {
     std::cout << "Processing file: " << inputFilePath << " with structure: " << structureType << std::endl;
 
     // 1. Ler dados do CSV para a estrutura de dados
@@ -51,6 +51,7 @@ void FileProcessor::processFile(std::unique_ptr<IDataStructure> dataStructure, c
 
     std::cout << "Processing complete. Output saved to: " << outputFilePath << std::endl;
     std::cout << "==================================================================" << std::endl;
+    return peak_memory_kb;
 }
 
 // Lê timestamps de um arquivo CSV e os adiciona à estrutura de dados

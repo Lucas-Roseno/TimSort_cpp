@@ -5,6 +5,7 @@
 namespace MemoryMonitor {
     // Retorna o Resident Set Size (RSS) atual do processo em kilobytes
     long getCurrentRSS();
+    long getMaxRSS();
 }
 
 #endif // MEMORY_MONITOR_H

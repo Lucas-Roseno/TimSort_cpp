@@ -4,32 +4,94 @@
 
 #include "IDataStructure.h"
 #include <array>
-#include "Constants.h"
+#include <vector>
+#include <stdexcept>
 
-// Implementação de uma fila estática usando std::array
+template <size_t MaxSize>
 class StaticQueue : public IDataStructure {
 private:
-    std::array<Timestamp, MAX_STATIC_SIZE> data;
-    int head; // Índice do início da fila
-    int tail; // Índice do final da fila
+    std::array<Timestamp, MaxSize> data;
+    int head;
+    int tail;
     int currentSize;
 
 public:
-    // Construtor
     StaticQueue();
-
-    // Implementação dos métodos da interface IDataStructure
     void add(const Timestamp& ts) override; // Enqueue
-    // Removido get e set
     int size() const override;
-    size_t getMemoryUsageInBytes() const override; // <-- ADICIONADO
+    size_t getMemoryUsageInBytes() const override;
     std::vector<Timestamp> toVector() const override;
     void fromVector(const std::vector<Timestamp>& vec) override;
     void clear() override;
-
-    // Método específico de fila (opcional, mas útil)
     Timestamp dequeue();
 };
 
-#endif // STATIC_QUEUE_H
+// --- Implementação ---
 
+template <size_t MaxSize>
+StaticQueue<MaxSize>::StaticQueue() : head(0), tail(0), currentSize(0) {}
+
+template <size_t MaxSize>
+void StaticQueue<MaxSize>::add(const Timestamp& ts) {
+    if (currentSize < MaxSize) {
+        data[tail] = ts;
+        tail = (tail + 1) % MaxSize;
+        currentSize++;
+    } else {
+        throw std::out_of_range("StaticQueue is full");
+    }
+}
+
+template <size_t MaxSize>
+int StaticQueue<MaxSize>::size() const {
+    return currentSize;
+}
+
+template <size_t MaxSize>
+std::vector<Timestamp> StaticQueue<MaxSize>::toVector() const {
+    std::vector<Timestamp> vec;
+    vec.reserve(currentSize);
+    int current = head;
+    for (int i = 0; i < currentSize; ++i) {
+        vec.push_back(data[current]);
+        current = (current + 1) % MaxSize;
+    }
+    return vec;
+}
+
+template <size_t MaxSize>
+void StaticQueue<MaxSize>::fromVector(const std::vector<Timestamp>& vec) {
+    clear();
+    if (vec.size() > MaxSize) {
+        throw std::out_of_range("Vector size exceeds StaticQueue capacity");
+    }
+    for (const auto& ts : vec) {
+        add(ts);
+    }
+}
+
+template <size_t MaxSize>
+void StaticQueue<MaxSize>::clear() {
+    head = 0;
+    tail = 0;
+    currentSize = 0;
+}
+
+template <size_t MaxSize>
+Timestamp StaticQueue<MaxSize>::dequeue() {
+    if (currentSize > 0) {
+        Timestamp front = data[head];
+        head = (head + 1) % MaxSize;
+        currentSize--;
+        return front;
+    } else {
+        throw std::out_of_range("Dequeue from empty StaticQueue");
+    }
+}
+
+template <size_t MaxSize>
+size_t StaticQueue<MaxSize>::getMemoryUsageInBytes() const {
+    return sizeof(data);
+}
+
+#endif // STATIC_QUEUE_H

@@ -27,7 +27,7 @@ public:
     FileProcessor(ResultCollector* collector) : resultCollector(collector) {}
 
     // Processa um arquivo CSV com uma estrutura de dados específica
-    void processFile(std::unique_ptr<IDataStructure> dataStructure, const std::string& inputFilePath, const std::string& outputFilePath, const std::string& structureType, int dataSize);
+    long processFile(std::unique_ptr<IDataStructure> dataStructure, const std::string& inputFilePath, const std::string& outputFilePath, const std::string& structureType, int dataSize);
 };
 
 #endif // FILE_PROCESSOR_H
